@@ -1,8 +1,15 @@
 const registry = [];
 
+// API_ENABLED_MODULES (comma separated) wins over the panel setting, so each machine can decide
+// on its own even when several machines share the same settings store. Empty means "not set".
+const fromEnv = () => {
+  const raw = (process.env.API_ENABLED_MODULES || '').trim();
+  return raw ? raw.split(',').map((m) => m.trim()).filter(Boolean) : undefined;
+};
+
 // enabledModules unset (never configured) keeps every module on, so existing installs don't change.
 const isEnabled = (id) => {
-  const enabled = global.apiSettings && global.apiSettings.enabledModules;
+  const enabled = fromEnv() || (global.apiSettings && global.apiSettings.enabledModules);
   return !Array.isArray(enabled) || enabled.includes(id);
 };
 
