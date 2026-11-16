@@ -8,6 +8,7 @@
 const { body, validationResult } = require('express-validator');
 const ApiSettingsModel = require("../models/api/api_settings.model");
 const apiHelper = require('../helpers/api');
+const { availableModules } = require('../helpers/modules');
 
 const validators = {
   update: () => {
@@ -18,7 +19,8 @@ const validators = {
       body('refreshTokenExpiresIn', 'Invalid refreshTokenExpiresIn.').matches(/\d+(m|h|d|y)/).optional(),
       body('storeAccessesHistoryEnabled', 'Invalid storeAccessesHistoryEnabled.').matches(/(on|off)/).optional(),
       body('swaggerHost', 'Invalid swaggerHost.').matches(/(http|https):\/\/.*/).optional(),
-      body('swaggerPort', 'Invalid swaggerPort.').isInt().optional()
+      body('swaggerPort', 'Invalid swaggerPort.').isInt().optional(),
+      body('enabledModules', 'Invalid enabledModules.').optional().isArray().custom((list) => list.every((id) => availableModules().includes(id)))
     ];
   }
 };
@@ -33,7 +35,7 @@ const ApiSettingsController = {
         }
 
         ApiSettingsModel.findOne().then(apiSettings => {
-          return res.status(201).send({ success: true, data: apiSettings });
+          return res.status(201).send({ success: true, data: apiSettings, availableModules: availableModules() });
         })
       });
     } catch (err) {
@@ -97,6 +99,10 @@ const ApiSettingsController = {
           }
           if (data.storeAccessesHistoryEnabled) {
             apiSettingsData.storeAccessesHistoryEnabled = data.storeAccessesHistoryEnabled;
+          }
+
+          if (Array.isArray(data.enabledModules)) {
+            apiSettingsData.enabledModules = data.enabledModules;
           }
 
           // SWAGGER SETTING

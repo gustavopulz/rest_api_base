@@ -21,6 +21,7 @@ const ApiSettingsSchema = new mongoose.Schema({
   refreshTokenExpiresIn: { type: String, default: null },
   storeAccessesHistoryEnabled: { type: String, required: true, default: "off" },
   needReboot: { type: Boolean, default: false },
+  enabledModules: { type: [String], default: undefined },
   swaggerHost: { type: String, default: null },
   swaggerPort: { type: String, default: null },
   swaggerPath: { type: String, default: null },
