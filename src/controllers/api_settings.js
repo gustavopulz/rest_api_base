@@ -20,7 +20,7 @@ const validators = {
       body('storeAccessesHistoryEnabled', 'Invalid storeAccessesHistoryEnabled.').matches(/(on|off)/).optional(),
       body('swaggerHost', 'Invalid swaggerHost.').matches(/(http|https):\/\/.*/).optional(),
       body('swaggerPort', 'Invalid swaggerPort.').isInt().optional(),
-      body('enabledModules', 'Invalid enabledModules.').optional().isArray().custom((list) => list.every((id) => availableModules().includes(id)))
+      body('enabledModules', 'Invalid enabledModules.').optional().isArray().bail().custom((list) => list.every((id) => availableModules().includes(id)))
     ];
   }
 };
